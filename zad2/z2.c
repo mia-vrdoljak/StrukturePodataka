@@ -59,6 +59,7 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+<<<<<<< HEAD
 int addFirst(position p) 
 {
 	pozicija q = NULL;
@@ -112,3 +113,50 @@ int toup(char c)
 
 	return c;
 }
+=======
+int printList(position p) {
+	while (p != NULL) {
+		printf(" %s %s (%d)", p->name, p->lastName, p->age);
+		p = p->next;
+	}
+
+	return 0;
+}
+
+int addLast(position p) {
+	position q;
+
+	while (p->next != NULL)
+		p = p->next;
+	
+	q = (position)malloc(sizeof(Person));
+
+	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite unijeti na kraj liste(u obliku I P G): ");
+	scanf(" %s %s %d", q->name, q->lastName, &q->age);
+
+	p->next = q;
+	q->next = NULL;
+
+	return 0;
+}
+
+int deleteElement(position p) {
+	position pToDelete;
+	char nameToDelete[MAX_NAME], lastNameToDelete[MAX_NAME];
+	int ageToDelete;
+
+	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite izbrisati iz liste(u obliku I P G): ");
+	scanf(" %s %s %d", nameToDelete, lastNameToDelete, &ageToDelete);
+
+	while (p->next != NULL) {
+		p = p->next;
+		if (p->name == nameToDelete && p->lastName == lastNameToDelete && p->age == ageToDelete) {
+			pToDelete = p;
+			p->next = pToDelete->next;
+			free(pToDelete);
+		}
+	}
+		
+	return 0;
+}
+>>>>>>> 76808a99696ae001e2b4d88643c3eb1e782140e9
