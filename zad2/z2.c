@@ -29,10 +29,9 @@ int main(int argc, char** argv)
 		.year = { 0 },
 		.next = NULL
 	};
-	char ch;
-	int t = 0;
+	char ch='w';
 
-	while (t==0) {
+	while (toup(ch)!='X') {
 		printf("Izaberite sto zelite napraviti:\n\t-dodati novi element na pocetak liste(P)\n\t-ispisati listu(I)\n\t-dodati novi element na kraj liste(K)\n\t-trazenje elementa u listi po prezimenu(T)\n\t-brisati element iz liste(B)\n\t-izlaz(X)\nVas odabir(slovo): ");
 		scanf(" %c", &ch);
 
@@ -54,7 +53,6 @@ int main(int argc, char** argv)
 			deleteElement(&head);
 			break;
 		case 'X':
-			t++;
 			break;
 		default:
 			printf("Pogresan unos!");
