@@ -30,40 +30,45 @@ int main(int argc, char** argv)
 		.next = NULL
 	};
 	char ch;
+	int t = 0;
 
-	while (1) {
+	while (t==0) {
 		printf("Izaberite sto zelite napraviti:\n\t-dodati novi element na pocetak liste(P)\n\t-ispisati listu(I)\n\t-dodati novi element na kraj liste(K)\n\t-trazenje elementa u listi po prezimenu(T)\n\t-brisati element iz liste(B)\n\t-izlaz(X)\nVas odabir(slovo): ");
 		scanf(" %c", &ch);
 
-		toup(ch);
-
-		switch (ch)
+		switch (toup(ch))
 		{
 		case 'P':
 			addFirst(&head);
+			break;
 		case 'I':
 			printList(head.next);
+			break;
 		case 'K':
 			addLast(&head);
+			break;
 		case 'T':
 			searchByLastName(head.next);
+			break;
 		case 'B':
 			deleteElement(&head);
+			break;
 		case 'X':
+			t++;
 			break;
 		default:
 			printf("Pogresan unos!");
+			break;
 		}
 	}
 
 	return 0;
 }
 
-<<<<<<< HEAD
 int addFirst(position p) 
 {
-	pozicija q = NULL;
-	q = (pozicija)malloc(sizeof(Person));
+	position q = NULL;
+	q = (position)malloc(sizeof(Person));
 
 	if (q == NULL) {
 		printf("Memorija nije alocirana!\n");
@@ -73,7 +78,7 @@ int addFirst(position p)
 	printf("Ime osobe:");
 	scanf("%s", q->name);
 	printf("Prezime osobe:");
-	scanf("%s", q->surname);
+	scanf("%s", q->lastName);
 	printf("Godina rodenja osobe:");
 	scanf("%d", &q->year);
 
@@ -91,14 +96,12 @@ int searchByLastName(position p)
 
 	while (p != NULL)
 	{
-		if (strcmp(pr, p->surname) == 0) {
-			printf("\nAdresa od osobe %s %s je: %p\n", p->name, p->surname, p);
+		if (strcmp(pr, p->lastName) == 0) {
+			printf("\nAdresa od osobe %s %s je: %p\n", p->name, p->lastName, p);
 			i++;
 		}
 
 		p = p->next;
-
-
 	}
 
 	if (i == 0)
@@ -108,15 +111,15 @@ int searchByLastName(position p)
 }
 int toup(char c) 
 {
-	if ('a' <= c <= 'z')
-		c -= ('a' - 'A');
-
+	if ('a' <= c && c <= 'z')
+		c -= 'a'-'A';
+	
 	return c;
 }
-=======
+
 int printList(position p) {
 	while (p != NULL) {
-		printf(" %s %s (%d)", p->name, p->lastName, p->age);
+		printf(" %s %s (%d)", p->name, p->lastName, p->year);
 		p = p->next;
 	}
 
@@ -132,7 +135,7 @@ int addLast(position p) {
 	q = (position)malloc(sizeof(Person));
 
 	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite unijeti na kraj liste(u obliku I P G): ");
-	scanf(" %s %s %d", q->name, q->lastName, &q->age);
+	scanf(" %s %s %d", q->name, q->lastName, &q->year);
 
 	p->next = q;
 	q->next = NULL;
@@ -143,14 +146,14 @@ int addLast(position p) {
 int deleteElement(position p) {
 	position pToDelete;
 	char nameToDelete[MAX_NAME], lastNameToDelete[MAX_NAME];
-	int ageToDelete;
+	int yearToDelete;
 
 	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite izbrisati iz liste(u obliku I P G): ");
-	scanf(" %s %s %d", nameToDelete, lastNameToDelete, &ageToDelete);
+	scanf(" %s %s %d", nameToDelete, lastNameToDelete, &yearToDelete);
 
 	while (p->next != NULL) {
 		p = p->next;
-		if (p->name == nameToDelete && p->lastName == lastNameToDelete && p->age == ageToDelete) {
+		if (p->name == nameToDelete && p->lastName == lastNameToDelete && p->year == yearToDelete) {
 			pToDelete = p;
 			p->next = pToDelete->next;
 			free(pToDelete);
@@ -159,4 +162,4 @@ int deleteElement(position p) {
 		
 	return 0;
 }
->>>>>>> 76808a99696ae001e2b4d88643c3eb1e782140e9
+
