@@ -117,7 +117,7 @@ int toup(char c)
 
 int printList(position p) {
 	while (p != NULL) {
-		printf(" %s %s (%d)", p->name, p->lastName, p->year);
+		printf(" %s %s (%d)\n", p->name, p->lastName, p->year);
 		p = p->next;
 	}
 
@@ -127,11 +127,15 @@ int printList(position p) {
 int addLast(position p) {
 	position q;
 
+	q = (position)malloc(sizeof(Person));
+	if (q == NULL) {
+		printf("Memorija nije alocirana!\n");
+		return 1;
+	}
+
 	while (p->next != NULL)
 		p = p->next;
 	
-	q = (position)malloc(sizeof(Person));
-
 	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite unijeti na kraj liste(u obliku I P G): ");
 	scanf(" %s %s %d", q->name, q->lastName, &q->year);
 
@@ -142,20 +146,24 @@ int addLast(position p) {
 }
 
 int deleteElement(position p) {
-	position pToDelete;
+	position x=NULL;
 	char nameToDelete[MAX_NAME], lastNameToDelete[MAX_NAME];
 	int yearToDelete;
 
 	printf("Unesite ime, prezime i godinu rodenja osobe koju zelite izbrisati iz liste(u obliku I P G): ");
-	scanf(" %s %s %d", nameToDelete, lastNameToDelete, &yearToDelete);
+	scanf(" %s %s %d", &nameToDelete, &lastNameToDelete, &yearToDelete);
 
-	while (p->next != NULL) {
+	while (p->next != NULL && strcmp(nameToDelete, p->name) != 0 && strcmp(lastNameToDelete, p->lastName) != 0 && yearToDelete != p->year) 
+	{
+		x = p;
 		p = p->next;
-		if (p->name == nameToDelete && p->lastName == lastNameToDelete && p->year == yearToDelete) {
-			pToDelete = p;
-			p->next = pToDelete->next;
-			free(pToDelete);
-		}
+	}
+
+	if (x != NULL && strcmp(nameToDelete, p->name) == 0 && strcmp(lastNameToDelete, p->lastName) == 0 && yearToDelete == p->year) 
+	{
+		p = x->next;
+		x->next = p->next;
+		free(p);
 	}
 		
 	return 0;
