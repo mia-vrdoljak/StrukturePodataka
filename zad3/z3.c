@@ -35,8 +35,12 @@ int memoryAllocation(position* q);
 
 int main(int argc, char** argv)
 {
-	Person head;
-	head.next = NULL;
+	Person head{
+		.name = {0},
+		.lastName = {0},
+		.year = 0,
+		.next = NULL
+	};
 
 	char choice;
 
@@ -298,8 +302,13 @@ int readFile() {
 	char file[MAX_NAME];
 	int lines = 0;
 
-	Person head;
-	head.next = NULL;
+	Person head{
+		.name = {0},
+		.lastName = {0},
+		.year = 0,
+		.next = NULL
+	};
+
 	position p = &head;
 	position q = NULL;
 
