@@ -5,19 +5,18 @@
 #include <ctype.h>
 
 #define MAX_NAME (1024)
-#define MEMORY_ALLOCATION_ERROR (-1)
-#define NO_LAST_NAME_ERROR (-2)
+#define MEMORY_ALLOCATION_ERROR (2)
 
 struct _person;
 typedef struct _person* position;
 typedef struct _person {
 	char name[MAX_NAME];
 	char lastName[MAX_NAME];
-	int age;
+	int year;
 	position next;
 }Person;
 
-int menu(position p);
+int menu();
 
 int addFirst(position p);
 int addLast(position p);
@@ -32,28 +31,65 @@ int readFile();
 
 int addPerson(position q);
 int insertAfter(position p, position q);
-int memoryAllocation(position q);
-int findLastName(position p, char lastNameToFind);
+int memoryAllocation(position* q);
 
 int main(int argc, char** argv)
 {
-	Person head = {
-		.name = { 0 },
-		.lastName = { 0 },
-		.age = { 0 },
-		.next = NULL
-	};
+	Person head;
+	head.next = NULL;
+
+	char choice;
 
 	while (1) {
-		menu(&head);
-	}
 
+		menu();
+		scanf(" %c", &choice);
+
+		switch (tolower(choice))
+		{
+		case 'a':
+			addFirst(&head);
+			break;
+		case 'b':
+			addLast(&head);
+			break;
+		case 'c':
+			addBefore(&head);
+			break;
+		case 'd':
+			addAfter(&head);
+			break;
+		case 'e':
+			searchByLastName(head.next);
+			break;
+		case 'f':
+			sortByLastName(head.next);
+			break;
+		case 'g':
+			printList(head.next);
+			break;
+		case 'h':
+			deleteElement(&head);
+			break;
+		case 'i':
+			addToFile(head.next);
+			break;
+		case 'j':
+			readFile();
+			break;
+		case 'x':
+			printf("Do videnja!");
+			return 0;
+			break;
+		default:
+			printf("Pogresan unos!");
+			break;
+		}
+	}
 	return 0;
 }
 
-int menu(position p) {
-	char ch;
-
+int menu() {
 	printf("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n"
 		"\t\t\tIZBORNIK\n\n"
 		"\ta) unos na pocetak\n"
@@ -68,43 +104,14 @@ int menu(position p) {
 		"\tj) unos iz datoteke\n"
 		"\tx) izlaz\n\n"
 		"Vas odabir: ");
-	scanf(" %c", &ch);
 
-	tolower(ch);
-
-	switch (ch)
-	{
-	case 'a':
-		addFirst(&head);
-	case 'b':
-		addLast(&head);
-	case 'c':
-		addBefore(&head);
-	case 'd':
-		addAfter(&head);
-	case 'e':
-		searchByLastName(head.next);
-	case 'f':
-		sortByLastName(head.next);
-	case 'g':
-		printList(head.next);
-	case 'h':
-		deleteElement(&head);
-	case 'i':
-		addToFile(head.next);
-	case 'j':
-		readFile();
-	case 'x':
-		break;
-	default:
-		printf("Pogresan unos!");
-	}
+	return 0;
 }
 
-int memoryAllocation(position q) {
-	q = (position)malloc(sizeof(Person));
+int memoryAllocation(position* q) {
+	*q = (position)malloc(sizeof(Person));
 
-	if (q == NULL) {
+	if (*q == NULL) {
 		printf("Memorija nije alocirana!\n");
 		return MEMORY_ALLOCATION_ERROR;
 	}
@@ -118,7 +125,7 @@ int addPerson(position q) {
 	printf("Prezime osobe:");
 	scanf(" %s", q->lastName);
 	printf("Godina rodenja osobe:");
-	scanf("% d", &q->year);
+	scanf(" %d", &q->year);
 
 	return 0;
 }
@@ -130,9 +137,9 @@ int insertAfter(position p, position q) {
 	return 0;
 }
 
-int addFirst(position p){
+int addFirst(position p) {
 	position q = NULL;
-	memoryAllocation(q);
+	memoryAllocation(&q);
 
 	addPerson(q);
 	insertAfter(p, q);
@@ -142,87 +149,75 @@ int addFirst(position p){
 
 int addLast(position p) {
 	position q = NULL;
-	memoryAllocation(q);
+	memoryAllocation(&q);
 
 	addPerson(q);
 
 	while (p->next != NULL)
 		p = p->next;
 
-	p->next = q;
-	q->next = NULL;
+	insertAfter(p, q);
 
 	return 0;
 }
 
 int addBefore(position p) {
 	char lastNameToFind[MAX_NAME];
+
 	position q = NULL;
-	memoryAllocation(q);
-	position r = NULL;
+	memoryAllocation(&q);
+
+	addPerson(q);
 
 	printf("Unesite prezime osobe ispred koje zelite unijeti novu: ");
 	scanf(" %s", lastNameToFind);
-	
-	r = findLastName(p, lastNameToFind);
-	if (r != NO_LAST_NAME_ERROR) {
-		addPerson(q);
-		insertAfter(q, r);
-	}
+
+	while (p->next != NULL && strcmp(lastNameToFind, p->next->lastName) != 0)
+		p = p->next;
+
+	if (p->next != NULL)
+		insertAfter(p, q);
 
 	return 0;
 }
 
 int addAfter(position p) {
 	char lastNameToFind[MAX_NAME];
+
 	position q = NULL;
-	memoryAllocation(q);
-	position r = NULL;
+	memoryAllocation(&q);
+
+	addPerson(q);
 
 	printf("Unesite prezime osobe iza koje zelite unijeti novu: ");
 	scanf(" %s", lastNameToFind);
 
-	r = findLastName(p, lastNameToFind);
-	if (r != NO_LAST_NAME_ERROR) {
-		addPerson(q);
-		insertAfter(r, q);
-	}
+	while (p->next != NULL && strcmp(lastNameToFind, p->lastName) != 0)
+		p = p->next;
+
+	insertAfter(p, q);
 
 	return 0;
-}
-
-int findLastName(position p, char lastNameToFind) {
-	int i = 0;
-	position r;
-
-	while (p != NULL)
-	{
-		if (strcmp(lastNameToFind, p->lastName) == 0) {
-			r = p;
-			i++;
-		}
-
-		p = p->next;
-	}
-
-	if (i == 0) {
-		return NO_LAST_NAME_ERROR;
-	}
-
-	return r;
 }
 
 int searchByLastName(position p)
 {
 	char lastNameToFind[MAX_NAME];
+	int i = 0;
+
 	printf("\nUnesite prezime osobe koju zelite pronaci: ");
 	scanf(" %s", &lastNameToFind);
-	position r;
 
-	r = findLastName(p, lastNameToFind);
+	while (p != NULL) {
+		if (strcmp(lastNameToFind, p->lastName) == 0) {
+			printf("\nAdresa od osobe %s %s je: %p\n", p->name, p->lastName, p);
+			i++;
+		}
+		p = p->next;
+	}
 
-	if (r != NO_LAST_NAME_ERROR)
-		printf("Tražena osoba postoji(na adresi %p)!", r);
+	if (i == 0)
+		printf("Osoba s trazenim prezimenom nije pronadena!\n");
 
 	return 0;
 }
@@ -250,9 +245,9 @@ int sortByLastName(position p) {
 
 int printList(position p) {
 	int i = 1;
-	
+
 	while (p != NULL) {
-		printf(" %d. %s %s (%d)\n", i,  p->name, p->lastName, p->year);
+		printf(" %d. %s %s (%d)\n", i, p->name, p->lastName, p->year);
 		p = p->next;
 		i++;
 	}
@@ -261,16 +256,20 @@ int printList(position p) {
 }
 
 int deleteElement(position p) {
-	position r = NULL;
+	position q = NULL;
 	char lastNameToDelete[MAX_NAME];
 
 	printf("Unesite prezime osobe koju zelite izbrisati iz liste: ");
 	scanf(" %s", lastNameToDelete);
 
-	r = findLastName(p, lastNameToDelete);
-	if (r != NO_LAST_NAME_ERROR) {
-		p = r->next;
-		r->next = p->next;
+	while (p->next != NULL && strcmp(lastNameToDelete, p->lastName) != 0)
+	{
+		q = p;
+		p = p->next;
+	}
+	if (q != NULL && strcmp(lastNameToDelete, p->lastName) == 0) {
+		p = q->next;
+		q->next = p->next;
 		free(p);
 	}
 
@@ -278,9 +277,63 @@ int deleteElement(position p) {
 }
 
 int addToFile(position p) {
+	FILE* fp = NULL;
+	fp = fopen("lista.txt", "w");
 
+	if (fp == NULL) {
+		printf("Error opening file!");
+		return 1;
+	}
+
+	while (p != NULL) {
+		fprintf(fp, "%s %s %d\n", p->name, p->lastName, p->year);
+		p = p->next;
+	}
+
+	fclose(fp);
+	return 0;
 }
 
 int readFile() {
+	char file[MAX_NAME];
+	int lines = 0;
 
+	Person head;
+	head.next = NULL;
+	position p = &head;
+	position q = NULL;
+
+	printf("Unesite ima datoteke iz koje zelite procitati listu: ");
+	scanf(" %s", &file);
+
+	FILE* fp = NULL;
+	fp = fopen(file, "r");
+
+	if (fp == NULL) {
+		printf("Error opening file!");
+		return 1;
+	}
+
+	while (!feof(fp)) {
+		if (fgetc(fp) == '\n')
+			lines++;
+	}
+	rewind(fp);
+
+	if (lines != 0) {
+		for (int temp = 0; temp < lines; temp++) {
+			q = (position)malloc(sizeof(Person));
+			if (q == NULL) {
+				printf("Memorija nije alocirana!\n");
+				return 1;
+			}
+			fscanf(fp, "%s %s %d\n", p->name, p->lastName, p->year);
+			q->next = p->next;
+			p->next = q;
+			p = p->next;
+		}
+	}
+	fclose(fp);
+	printList(head.next);
+	return 0;
 }
