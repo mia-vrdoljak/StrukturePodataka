@@ -35,7 +35,7 @@ int memoryAllocation(position* q);
 
 int main(int argc, char** argv)
 {
-	Person head {
+	Person head{
 		.name = {0},
 		.lastName = {0},
 		.year = 0,
@@ -333,8 +333,7 @@ int readFile() {
 		for (int temp = 0; temp < lines; temp++) {
 			memoryAllocation(&q);
 			fscanf(fp, "%s %s %d\n", q->name, q->lastName, &q->year);
-			q->next = p->next;
-			p->next = q;
+			insertAfter(p, q);
 			p = p->next;
 		}
 	}
