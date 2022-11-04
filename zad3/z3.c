@@ -35,7 +35,7 @@ int memoryAllocation(position* q);
 
 int main(int argc, char** argv)
 {
-	Person head{
+	Person head {
 		.name = {0},
 		.lastName = {0},
 		.year = 0,
@@ -331,12 +331,8 @@ int readFile() {
 
 	if (lines != 0) {
 		for (int temp = 0; temp < lines; temp++) {
-			q = (position)malloc(sizeof(Person));
-			if (q == NULL) {
-				printf("Memorija nije alocirana!\n");
-				return 1;
-			}
-			fscanf(fp, "%s %s %d\n", p->name, p->lastName, p->year);
+			memoryAllocation(&q);
+			fscanf(fp, "%s %s %d\n", q->name, q->lastName, &q->year);
 			q->next = p->next;
 			p->next = q;
 			p = p->next;
