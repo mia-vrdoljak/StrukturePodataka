@@ -57,6 +57,8 @@ int main(int argc, char** argv)
 	};
 
 	readFile(&Head1, &Head2);
+	print(Head1.next);
+	print(Head2.next);
 
 	char choice;
 
@@ -82,7 +84,7 @@ int main(int argc, char** argv)
 			print(HeadRes.next);
 			break;
 		case 'x':
-			printf("Do videnja!");
+			printf("Dovidenja!");
 			return 0;
 			break;
 		default:
@@ -101,6 +103,10 @@ int memoryAllocation(position* q) {
 		return 1;
 	}
 
+	(*q)->coef = 0;
+	(*q)->exp = 0;
+	(*q)->next = NULL;
+
 	return 0;
 }
 
@@ -112,10 +118,10 @@ int insertAfter(position p, position q) {
 }
 
 int insertSort(position p, position q) {
-	while (p->next != NULL && q->exp < p->next->exp)
+	while (p->next != NULL && q->exp > p->next->exp)
 		p = p->next;
 
-	insertAfter(p, q);
+	mergeAfter(p, q);
 
 	return 0;
 }
@@ -129,13 +135,13 @@ int checker(position p) {
 	return 0;
 }
 
-int merge(position p) {
-	while (p->next != NULL) {
-		if (p->exp == p->next->exp) {
-			p->coef += p->next->coef;
-			delete(p);
-		}
-		p = p->next;
+int mergeAfter(position p, position q) {
+	if (p->next == NULL || q->exp < p->next->exp) {
+		insertAfter(p, q);
+	}
+	else /* if (q->exp == p->next->exp) */ {
+		p->next->coef += q->coef;
+		free(q);
 	}
 	return 0;
 }
@@ -203,36 +209,38 @@ int addPoly(position p, char* buffer) {
 	return 0;
 }
 
-int adding(position p1, position p2, position pA) {
-	position temp;
+int adding(position head1, position head2, position pA) {
+	position temp = NULL;
+	position p1 = head1->next;
+	position p2 = head2->next;
 
-	while (p1->next != NULL && p2->next != NULL) {
+	while (p1 != NULL && p2 != NULL) {
 		position new = NULL;
 		memoryAllocation(&new);
 
-		if (p1->next->exp < p2->next->exp) {
-			new->exp = p1->next->exp;
-			new->coef = p1->next->coef;
+		if (p1->exp < p2->exp) {
+			new->exp = p1->exp;
+			new->coef = p1->coef;
 			p1 = p1->next;
 		}
-		else if (p1->next->exp > p2->next->exp) {
-			new->exp = p2->next->exp;
-			new->coef = p2->next->coef;
+		else if (p1->exp > p2->exp) {
+			new->exp = p2->exp;
+			new->coef = p2->coef;
 			p2 = p2->next;
 		}
 		else {
-			new->exp = p1->next->exp;
-			new->coef = (p1->next->coef + p2->next->coef);
+			new->exp = p1->exp;
+			new->coef = (p1->coef + p2->coef);
 			p1 = p1->next;
 			p2 = p2->next;
 		}
 		insertAfter(pA, new);
 	}
 
-	if (p1->next == NULL)
-		temp = p2->next;
+	if (p1 == NULL)
+		temp = p2;
 	else
-		temp = p1->next;
+		temp = p1;
 	while (temp != NULL)
 	{
 		position new = NULL;
@@ -241,8 +249,8 @@ int adding(position p1, position p2, position pA) {
 		new->next = NULL;
 		new->exp = temp->exp;
 		new->coef = temp->coef;
-		pA->next = new;
-		pA = new;
+		insertAfter(pA, new);
+
 		temp = temp->next;
 	}
 
@@ -251,21 +259,16 @@ int adding(position p1, position p2, position pA) {
 
 int multiplying(position p1, position p2, position pM) {
 	position new = NULL;
-	memoryAllocation(&new);
-
-	new->next = NULL;
-	Polinom Head = {
-		.coef = 0 ,
-		.exp = 0 ,
-		.next = new
-	};
+	position p2Start = p2;
 
 	while (p1 != NULL) {
+		p2 = p2Start;
 		while (p2 != NULL) {
+			memoryAllocation(&new);
 			new->exp = p1->exp + p2->exp;
 			new->coef = p1->coef * p2->coef;
 
-			adding(&Head, pM, pM);
+			insertSort(pM, new);
 
 			p2 = p2->next;
 		}
