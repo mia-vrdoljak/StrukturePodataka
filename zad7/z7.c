@@ -7,7 +7,7 @@
 #define MAX_NAME (1024)
 #define MEMORY_ALLOCATION_ERROR (-1)
 
-typedef struct Stog* Position;
+typedef struct _stog* Position;
 
 typedef struct _directory {
 	char name[MAX_NAME];
@@ -94,7 +94,7 @@ int PushStog(Position p, Directory* onStog) {
 		return MEMORY_ALLOCATION_ERROR;
 	}
 
-	InsertAfter(p, q);
+	insertAfter(p, q);
 
 	q->point = onStog;
 }
