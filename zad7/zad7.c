@@ -213,7 +213,7 @@ int Print(DirectoryP current) {
 		current = current->child;
 		while (current) {
 			printf(" %s\n", current->name);
-			current = current->child;
+			current = current->sibling;
 		}
 	}
 
