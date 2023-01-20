@@ -140,7 +140,7 @@ void FreeList(PositionC head)
 
 void Search(PositionC head)
 {
-	int BrojStan = 0;
+	int Citizens = 0;
 	char buffer[MAX_LINE] = "";
 
 	printf("Wich country do you wish to check?\n");
@@ -158,8 +158,8 @@ void Search(PositionC head)
 	{
 		printf("How many citizens does wanted town have?\n");
 		fgets(buffer, MAX_LINE, stdin);
-		sscanf(buffer, "%d", &BrojStan);
-		Print(head->root, BrojStan);
+		sscanf(buffer, "%d", &Citizens);
+		Print(head->root, Citizens);
 	}
 }
 
